@@ -1,8 +1,13 @@
 package com.ga.banking;
-
-import com.ga.banking.Service.Authentication;
+import com.ga.banking.enums.AccountType;
 import com.ga.banking.enums.MasterCardType;
-import com.ga.banking.models.*;
+import com.ga.banking.enums.RequestStatus;
+import com.ga.banking.models.AccountRequest;
+import com.ga.banking.models.Banker;
+import com.ga.banking.models.Customer;
+import com.ga.banking.models.User;
+import com.ga.banking.Service.Authentication;
+import com.ga.banking.Service.CustomerService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +16,280 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        // USERS
+        List<User> users = new ArrayList<>();
+
+        Customer customer = new Customer(1, "Noor", "noor", "1234");
+
+        Banker banker =
+                new Banker(2, "Ahmed", "ahmed", "5678");
+
+        users.add(customer);
+        users.add(banker);
+
+        // SERVICES
+        Authentication authenticationService = new Authentication(users);
+
+        CustomerService customerService =
+                new CustomerService(users);
+
+        // ACCOUNT REQUESTS
+
+        List<AccountRequest> requests = new ArrayList<>();
+
+
+        // MAIN MENU
+
+
+        boolean running = true;
+
+        while (running) {
+
+            System.out.println();
+            System.out.println("===== BANKING SYSTEM =====");
+            System.out.println("1. Customer");
+            System.out.println("2. Banker");
+            System.out.println("3. Exit");
+
+            System.out.print("Choose: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+
+            // CUSTOMER
+
+
+            if (choice == 1) {
+
+                System.out.println();
+                System.out.println("===== CUSTOMER =====");
+                System.out.println("1. Login");
+                System.out.println("2. Register");
+                System.out.println("3. Back");
+
+                System.out.print("Choose: ");
+                int customerChoice = scanner.nextInt();
+                scanner.nextLine();
+
+
+                // CUSTOMER LOGIN
+                if (customerChoice == 1) {
+
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+
+                    User loggedInUser =
+                            authenticationService.login(
+                                    username,
+                                    password
+                            );
+
+                    if (loggedInUser != null
+                            && loggedInUser instanceof Customer) {
+
+                        Customer loggedInCustomer =
+                                (Customer) loggedInUser;
+
+                        System.out.println();
+                        System.out.println(
+                                "Login successful!"
+                        );
+
+                        CMenu customerMenu = new CMenu(loggedInCustomer, scanner, requests);
+
+                        customerMenu.show();
+
+                    } else {
+
+                        System.out.println(
+                                "Invalid username or password."
+                        );
+                    }
+
+
+                    // CUSTOMER REGISTER
+                } else if (customerChoice == 2) {
+
+                    System.out.println();
+                    System.out.println(
+                            "===== CREATE CUSTOMER ====="
+                    );
+
+                    System.out.print("Name: ");
+                    String name = scanner.nextLine();
+
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+
+                    int id = users.size() + 1;
+
+                    Customer newCustomer =
+                            customerService.createCustomer(
+                                    id,
+                                    name,
+                                    username,
+                                    password
+                            );
+
+                    System.out.println();
+                    System.out.println(
+                            "Customer created successfully!"
+                    );
+
+                    System.out.println(
+                            "Welcome "
+                                    + newCustomer.getName()
+                    );
+
+
+                } else if (customerChoice == 3) {
+
+                    System.out.println("Back...");
+                }
+
+
+
+                // BANKER
+
+
+            } else if (choice == 2) {
+
+                System.out.println();
+                System.out.println("===== BANKER LOGIN =====");
+
+                System.out.print("Username: ");
+                String username = scanner.nextLine();
+
+                System.out.print("Password: ");
+                String password = scanner.nextLine();
+
+                User loggedInUser =
+                        authenticationService.login(
+                                username,
+                                password
+                        );
+
+                if (loggedInUser != null
+                        && loggedInUser instanceof Banker) {
+
+                    System.out.println();
+                    System.out.println("Banker login successful!");
+
+                    System.out.println("Welcome " + loggedInUser.getName());
+
+                    // Banker menu will be added next.
+                    System.out.println("Welcome " + loggedInUser.getName());
+                    BMenu bankerMenu = new BMenu(scanner, requests);
+
+                    bankerMenu.show();
+
+
+                } else {
+
+                    System.out.println(
+                            "Invalid username or password."
+                    );
+                }
+
+                // EXIT
+
+
+            } else if (choice == 3) {
+
+                running = false;
+
+                System.out.println();
+                System.out.println(
+                        "Thank you for using the Banking System!"
+                );
+
+
+            } else {
+
+                System.out.println(
+                        "Invalid choice."
+                );
+            }
+        }
+
+        scanner.close();
+    }
+}
+//import com.ga.banking.Service.Authentication;
+//import com.ga.banking.Service.CustomerService;
+//import com.ga.banking.enums.AccountType;
+//import com.ga.banking.enums.MasterCardType;
+//import com.ga.banking.models.*;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.Scanner;
+//
+//public class Main {
+//    public static void main(String[] args) {
+//        List<AccountRequest> requests = new ArrayList<>();
+//
+//        CMenu customerMenu = new CMenu(customer, scanner, requests);
+//        customerMenu.show();
+//
+//
+//    }}
+//
+//        Customer customer =
+//                new Customer(1, "Noor", "noor", "1234");
+//
+//        AccountRequest request = new AccountRequest(
+//                1,
+//                MasterCardType.PLATINUM,
+//                AccountType.CHECKING,
+//                customer
+//        );
+//
+//        System.out.println("===== ACCOUNT REQUEST =====");
+//        System.out.println("Customer: " + request.getCustomer().getName());
+//        System.out.println("Account Type: " + request.getAccountType());
+//        System.out.println("Requested Card: " + request.getRequestedMC());
+//        System.out.println("Status: " + request.getStatus());
+//
+//        request.approve(MasterCardType.STANDARD);
+//
+//        System.out.println("\n===== AFTER BANKER APPROVAL =====");
+//        System.out.println("Status: " + request.getStatus());
+//        System.out.println("Approved Card: " + request.getApprovedMC());
+//    }}
+//        List<User> users = new ArrayList<>();
+//
+//        CustomerService customerService = new CustomerService(users);
+//
+//        Customer newCustomer =
+//                customerService.createCustomer(3, "Sara", "sara123", "4567");
+//
+//        System.out.println("Customer created!");
+//        System.out.println("Welcome " + newCustomer.getName());
+//    }
+
+
+//    public static void main(String[] args) {
+//        CustomerService customerService =
+//                new CustomerService(User);
+//
+//        Customer newCustomer =
+//                customerService.createCustomer(
+//                        3,
+//                        "Sara",
+//                        "sara123",
+//                        "4567"
+//                );
+//
+//        System.out.println("Customer created!");
+//        System.out.println("Welcome " + newCustomer.getName());
 //        Scanner scanner = new Scanner(System.in);
 //
 //        System.out.println("===== BANKING SYSTEM =====");
@@ -251,5 +530,3 @@ public class Main {
 //
 //
 //
-    }
-}
