@@ -18,10 +18,6 @@ public class AccountService {
 
         Account account;
 
-        // =========================
-        // CREATE ACCOUNT
-        // =========================
-
         if (request.getAccountType() == AccountType.CHECKING) {
 
             account = new CheckingAccount(

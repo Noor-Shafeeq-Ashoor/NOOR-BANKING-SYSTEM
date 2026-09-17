@@ -69,78 +69,31 @@ public class TransactionData {
                     continue;
                 }
 
-
-                // Recreate transaction
-                Transaction transaction =
-                        new Transaction(
-                                transactionId,
-                                type,
-                                amount,
-                                balanceAfterTransaction,
-                                dateTime
-                        );
-
-
-                // Add transaction to account
-                account.addTransaction(
-                        transaction
-                );
-
-
-                // Restore transaction counter
-                account.updateTransactionCounter(
-                        transactionId
-                );
+                Transaction transaction = new Transaction(transactionId, type, amount, balanceAfterTransaction, dateTime);
+                account.addTransaction(transaction);
+                account.updateTransactionCounter(transactionId);
             }
 
-        } catch (IOException |
-                 IllegalArgumentException e) {
-
-            System.out.println(
-                    "Error loading transactions: "
-                            + e.getMessage()
-            );
+        }
+        catch (IOException | IllegalArgumentException e) {
+            System.out.println("Error loading transactions: " + e.getMessage());
         }
     }
-
-
-    // =========================================
-    // FIND ACCOUNT
-    // =========================================
-
-    private static Account findAccount(
-            List<Customer> customers,
-            int accountNumber) {
-
+    private static Account findAccount(List<Customer> customers, int accountNumber) {
         for (Customer customer : customers) {
-
-            for (Account account :
-                    customer.getAccounts()) {
-
-                if (account.getAccountNumber()
-                        == accountNumber) {
-
+            for (Account account : customer.getAccounts()) {
+                if (account.getAccountNumber() == accountNumber) {
                     return account;
                 }
             }
         }
-
         return null;
     }
-
-
-    // =========================================
-    // READ TRANSACTIONS FILE
-    // =========================================
 
     public static List<String> readTransactions() {
 
         try {
-
-            if (!Files.exists(FILE)) {
-                return new ArrayList<>();
-            }
-
+            if (!Files.exists(FILE)) {return new ArrayList<>();}
             return Files.readAllLines(FILE);
 
         } catch (IOException e) {
