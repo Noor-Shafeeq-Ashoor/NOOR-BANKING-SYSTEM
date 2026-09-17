@@ -111,8 +111,8 @@ The current version satisfies the main banking requirements, but several improve
 
 ---
 
-## ERD
+## UML Class Digram
 
-The following ERD represents the main entities and relationships in the banking system:
+The following UML represents the main entities and relationships in the banking system:
 <img width="550" height="487" alt="Screenshot 2026-09-17 084928" src="https://github.com/user-attachments/assets/1d1ac50d-e91c-4fd4-b461-a79658b51423" />
 
