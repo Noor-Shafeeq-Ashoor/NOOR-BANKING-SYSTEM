@@ -12,24 +12,49 @@ public class MasterCard {
         this.cardNumber = cardNumber;
     }
 
-    public int getCardNumber() {
-        return cardNumber;
+    public int getCardNumber() { return cardNumber;}
+
+    public void setCardNumber(int cardNumber) { this.cardNumber = cardNumber; }
+
+    public MasterCardType getMasterCardType() { return masterCardType;}
+
+    public void setMasterCardType(MasterCardType masterCardType) { this.masterCardType = masterCardType; }
+
+
+
+    public double getDailyDepositLimit() {
+        switch (masterCardType) {
+            case STANDARD:
+                return 100000;
+
+            case TITANIUM:
+                return 100000;
+
+            case PLATINUM:
+                return 100000;
+
+            default:
+                throw new IllegalStateException("Unknown Mastercard type.");
+        }
     }
 
-    public void setCardNumber(int cardNumber) {
-        this.cardNumber = cardNumber;
+    public double getDailyOwnAccountDepositLimit() {
+        switch (masterCardType) {
+            case STANDARD:
+                return 200000;
+
+            case TITANIUM:
+                return 200000;
+
+            case PLATINUM:
+                return 200000;
+
+            default:
+                throw new IllegalStateException("Unknown Mastercard type.");
+        }
     }
 
-    public MasterCardType getMasterCardType() {
-        return masterCardType;
-    }
-
-    public void setMasterCardType(MasterCardType masterCardType) {
-        this.masterCardType = masterCardType;
-    }
-
-    public double WithdrawalLimit() {
-
+    public double getDailyWithdrawalLimit() {
         switch (masterCardType) {
             case STANDARD:
                 return 5000;
@@ -41,31 +66,11 @@ public class MasterCard {
                 return 20000;
 
             default:
-                throw new IllegalStateException(
-                        "Unknown Mastercard type."
-                );
+                throw new IllegalStateException("Unknown Mastercard type.");
         }
     }
 
-    public double OwnAccTransferLimit() {
-
-        switch (masterCardType) {
-            case STANDARD:
-                return 20000;
-
-            case TITANIUM:
-                return 40000;
-
-            case PLATINUM:
-                return 80000;
-
-            default:
-                throw new IllegalStateException( "Unknown Mastercard type.");
-        }
-    }
-
-    public double TransferLimit() {
-
+    public double getDailyTransferLimit() {
         switch (masterCardType) {
             case STANDARD:
                 return 10000;
@@ -77,7 +82,25 @@ public class MasterCard {
                 return 40000;
 
             default:
-                throw new IllegalStateException( "Unknown Mastercard type.");
+                throw new IllegalStateException("Unknown Mastercard type.");
         }
     }
+
+    public double getDailyOwnAccountTransferLimit() {
+        switch (masterCardType) {
+            case STANDARD:
+                return 20000;
+
+            case TITANIUM:
+                return 40000;
+
+            case PLATINUM:
+                return 80000;
+
+            default:
+                throw new IllegalStateException("Unknown Mastercard type.");
+        }
+    }
+
+
 }

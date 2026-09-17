@@ -1,11 +1,13 @@
 package com.ga.banking;
 
+import com.ga.banking.DataBase.AccountData;
+import com.ga.banking.DataBase.RequestData;
 import com.ga.banking.enums.MasterCardType;
-import com.ga.banking.models.AccountRequest;
-import com.ga.banking.Service.BankerService;
 import com.ga.banking.models.Account;
+import com.ga.banking.models.AccountRequest;
 import com.ga.banking.models.MasterCard;
-import com.ga.banking.  Service.AccountService;
+import com.ga.banking.Service.AccountService;
+import com.ga.banking.Service.BankerService;
 import com.ga.banking.Generation.NumberGenerator;
 
 import java.util.List;
@@ -14,15 +16,33 @@ import java.util.Scanner;
 public class BMenu {
 
     private Scanner scanner;
+
     private BankerService bankerService;
+
     private AccountService accountService;
 
-    public BMenu(Scanner scanner, List<AccountRequest> requests) {
-        this.scanner = scanner;
-        this.bankerService = new BankerService(requests);
-        this.accountService = new AccountService();
+    private List<AccountRequest> requests;
 
+
+    public BMenu(
+            Scanner scanner,
+            List<AccountRequest> requests) {
+
+        this.scanner = scanner;
+
+        this.requests = requests;
+
+        this.bankerService =
+                new BankerService(requests);
+
+        this.accountService =
+                new AccountService();
     }
+
+
+    // =========================
+    // BANKER MENU
+    // =========================
 
     public void show() {
 
@@ -31,15 +51,33 @@ public class BMenu {
         while (running) {
 
             System.out.println();
-            System.out.println("===== BANKER MENU =====");
-            System.out.println("1. View Account Requests");
-            System.out.println("2. Approve Request");
-            System.out.println("3. Reject Request");
-            System.out.println("4. Logout");
+            System.out.println(
+                    "===== BANKER MENU ====="
+            );
+
+            System.out.println(
+                    "1. View Account Requests"
+            );
+
+            System.out.println(
+                    "2. Approve Request"
+            );
+
+            System.out.println(
+                    "3. Reject Request"
+            );
+
+            System.out.println(
+                    "4. Logout"
+            );
 
             System.out.print("Choose: ");
-            int choice = scanner.nextInt();
+
+            int choice =
+                    scanner.nextInt();
+
             scanner.nextLine();
+
 
             switch (choice) {
 
@@ -57,85 +95,219 @@ public class BMenu {
 
                 case 4:
                     running = false;
-                    System.out.println("Logged out.");
+
+                    System.out.println(
+                            "Logged out."
+                    );
+
                     break;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println(
+                            "Invalid choice."
+                    );
             }
         }
     }
 
+
+    // =========================
+    // APPROVE REQUEST
+    // =========================
+
     private void approveRequest() {
 
-        System.out.print("Enter Request ID: ");
-        int requestId = scanner.nextInt();
+        System.out.print(
+                "Enter Request ID: "
+        );
+
+        int requestId =
+                scanner.nextInt();
+
         scanner.nextLine();
+
+
+        // =========================
+        // CHOOSE MASTERCARD
+        // =========================
 
         System.out.println();
-        System.out.println("Choose Mastercard to give:");
-        System.out.println("1. Standard");
-        System.out.println("2. Titanium");
-        System.out.println("3. Platinum");
+
+        System.out.println(
+                "Choose Mastercard to give:"
+        );
+
+        System.out.println(
+                "1. Standard"
+        );
+
+        System.out.println(
+                "2. Titanium"
+        );
+
+        System.out.println(
+                "3. Platinum"
+        );
 
         System.out.print("Choose: ");
-        int cardChoice = scanner.nextInt();
+
+        int cardChoice =
+                scanner.nextInt();
+
         scanner.nextLine();
+
 
         MasterCardType approvedMC;
 
+
         if (cardChoice == 1) {
-            approvedMC = MasterCardType.STANDARD;
+
+            approvedMC =
+                    MasterCardType.STANDARD;
 
         } else if (cardChoice == 2) {
-            approvedMC = MasterCardType.TITANIUM;
+
+            approvedMC =
+                    MasterCardType.TITANIUM;
 
         } else if (cardChoice == 3) {
-            approvedMC = MasterCardType.PLATINUM;
+
+            approvedMC =
+                    MasterCardType.PLATINUM;
 
         } else {
-            System.out.println("Invalid Mastercard type.");
+
+            System.out.println(
+                    "Invalid Mastercard type."
+            );
+
             return;
         }
 
-        // Banker approves the request
+
+        // =========================
+        // APPROVE REQUEST
+        // =========================
+
         AccountRequest approvedRequest =
                 bankerService.approveRequest(
                         requestId,
                         approvedMC
                 );
 
-        // Stop if request was not found
+
         if (approvedRequest == null) {
             return;
         }
 
-        // Create Mastercard using the type chosen by Banker
-        MasterCard mastercard = new MasterCard(NumberGenerator.generateCardNumber(), approvedRequest.getApprovedMC());
 
-        // Create the actual bank account
+        // =========================
+        // SAVE REQUEST
+        // =========================
+
+        RequestData.saveRequests(
+                requests
+        );
+
+
+        // =========================
+        // CREATE MASTERCARD
+        // =========================
+
+        MasterCard mastercard =
+                new MasterCard(
+                        NumberGenerator.generateCardNumber(),
+                        approvedRequest.getApprovedMC()
+                );
+
+
+        // =========================
+        // CREATE ACCOUNT
+        // =========================
+
         Account account =
-                accountService.createAccount(approvedRequest, NumberGenerator.generateAccountNumber(), 0.0, mastercard);
+                accountService.createAccount(
+                        approvedRequest,
+                        NumberGenerator.generateAccountNumber(),
+                        0.0,
+                        mastercard
+                );
+
+
+        // =========================
+        // CONNECT ACCOUNT TO CUSTOMER
+        // =========================
+
+        account.setOwnerId(
+                approvedRequest
+                        .getCustomer()
+                        .getId()
+        );
+
+
+        // =========================
+        // SAVE ACCOUNT
+        // =========================
+
+        AccountData.saveCustomerAccounts(
+                approvedRequest.getCustomer()
+        );
+
+
+        // =========================
+        // SUCCESS MESSAGE
+        // =========================
 
         System.out.println();
-        System.out.println("===== ACCOUNT CREATED =====");
+
         System.out.println(
-                "Account Number: " + account.getAccountNumber()
+                "===== ACCOUNT CREATED ====="
         );
+
         System.out.println(
-                "Account Type: " + approvedRequest.getAccountType()
+                "Account Number: "
+                        + account.getAccountNumber()
         );
+
         System.out.println(
-                "Mastercard: " + approvedRequest.getApprovedMC()
+                "Account Type: "
+                        + approvedRequest.getAccountType()
+        );
+
+        System.out.println(
+                "Mastercard: "
+                        + approvedRequest.getApprovedMC()
         );
     }
 
+
+    // =========================
+    // REJECT REQUEST
+    // =========================
+
     private void rejectRequest() {
 
-        System.out.print("Enter Request ID: ");
-        int requestId = scanner.nextInt();
+        System.out.print(
+                "Enter Request ID: "
+        );
+
+        int requestId =
+                scanner.nextInt();
+
         scanner.nextLine();
 
-        bankerService.rejectRequest(requestId);
+
+        bankerService.rejectRequest(
+                requestId
+        );
+
+
+        // =========================
+        // SAVE UPDATED REQUEST
+        // =========================
+
+        RequestData.saveRequests(
+                requests
+        );
     }
 }

@@ -13,8 +13,19 @@ public class CustomerService {
             this.users = users;
         }
 
-        public Customer createCustomer(int id, String name, String username, String password) {
-            Customer customer = new Customer(id, name, username, password);
+    public boolean usernameExists(String username) {
+            for (User user : users) {
+                if (user.getUsername() .equalsIgnoreCase(username)) {
+                    return true; }
+            }
+            return false; }
+     public boolean emailExists(String email) { for (User user : users) { if (user.getEmail() .equalsIgnoreCase(email)) { return true; }
+     }
+     return false; }
+
+    public Customer createCustomer(int id, String username, String email, String password) {
+
+        Customer customer = new Customer(id, username, email, password);
             users.add(customer);
             return customer;
         }

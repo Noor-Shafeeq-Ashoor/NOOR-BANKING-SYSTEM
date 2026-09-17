@@ -2,27 +2,67 @@ package com.ga.banking.models;
 
 public abstract class User {
     private int id;
-    private String name;
     private String username;
-    private String password;
+    private String email;
 
-    public User (int id , String name , String username , String password){
-        this.id = id; this.name = name; this.username = username; this.password = password;
+    private String passHash;
+    private String passSalt;
+    private int Attempts;
+    private long lock;
+
+    public User(int id, String username, String email, String passHash, String passSalt) {
+
+        this.id = id;
+        this.username = username;
+        this.email = email;
+
+        this.passHash = passHash;
+        this.passSalt = passSalt;
+        this.Attempts = 0;
+        this.lock = 0;
     }
 
-    public int getId() { return id; }
+    public int getId() {return id;}
+    public void setId(int id) {this.id = id;}
 
-    public void setId(int id) { this.id = id;}
+    public String getUsername() {return username;}
+    public void setUsername(String username) {this.username = username;}
 
-    public String getName() { return name;}
+    public String getEmail() {return email;}
+    public void setEmail(String email) {this.email = email;}
 
-    public void setName(String name) { this.name = name;}
+    public String getPassHash() {return passHash;}
+    public void setPassHash(String passHash) {this.passHash = passHash;}
 
-    public String getUsername() { return username;}
+    public String getPassSalt() {return passSalt;}
+    public void setPassSalt(String passSalt) {this.passSalt = passSalt;}
 
-    public void setUsername(String username) { this.username = username;}
+    public int getAttempts() {return Attempts;}
+    public void setAttempts(int Attempts) {this.Attempts = Attempts;}
 
-    public String getPassword() { return password;}
+    public long getLock() {return lock;}
+    public void setLock(long lock) {this.lock = lock;}
 
-    public void setPassword(String password) { this.password = password; }
+
+
+    public void increaseAttempts() {
+        Attempts++;
+    }
+
+    public void resetAttempts() {
+        Attempts = 0;
+    }
+
+    public boolean isLocked() {
+        return System.currentTimeMillis() < lock;
+    }
+
+    public void lockOneMin() {
+        lock = System.currentTimeMillis() + (60 * 1000);
+    }
+
+    public void unlock() {
+        lock = 0;
+        Attempts = 0;
+    }
 }

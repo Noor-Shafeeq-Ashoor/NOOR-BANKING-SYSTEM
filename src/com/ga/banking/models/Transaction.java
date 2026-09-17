@@ -1,8 +1,7 @@
 package com.ga.banking.models;
 
-import com.ga.banking.enums.MasterCardType;
-import com.ga.banking.enums.TransctionType;
 
+import com.ga.banking.enums.TransctionType;
 import java.time.LocalDateTime;
 
 public class Transaction {
@@ -19,6 +18,12 @@ public class Transaction {
         this.balanceAfterTransaction = balanceAfterTransaction;
         this.dateTime = LocalDateTime.now();
     }
+    public Transaction( int transactionId, TransctionType type, double amount, double balanceAfterTransaction, LocalDateTime dateTime) {
+        this.transactionId = transactionId;
+        this.type = type;
+        this.amount = amount;
+        this.balanceAfterTransaction = balanceAfterTransaction;
+        this.dateTime = dateTime; }
 
     public int getTransactionId() {
         return transactionId;

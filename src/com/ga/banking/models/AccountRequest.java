@@ -1,5 +1,6 @@
 package com.ga.banking.models;
 
+import com.ga.banking.Service.Authentication;
 import com.ga.banking.enums.AccountType;
 import com.ga.banking.enums.MasterCardType;
 import com.ga.banking.enums.RequestStatus;
@@ -12,8 +13,15 @@ public class AccountRequest {
     private MasterCardType requestedMC;
     private MasterCardType approvedMC;
     private RequestStatus status;
+    private String accountPasswordHash;
+    private String accountPasswordSalt;
 
-    public AccountRequest(int requestId, MasterCardType requestedMC, AccountType accountType, Customer customer) {
+    public AccountRequest(
+            int requestId,
+            MasterCardType requestedMC,
+            AccountType accountType,
+            Customer customer,
+            String accountPassword) {
 
         this.requestId = requestId;
         this.requestedMC = requestedMC;
@@ -21,6 +29,39 @@ public class AccountRequest {
         this.customer = customer;
         this.status = RequestStatus.PENDING;
         this.approvedMC = null;
+
+        if (!accountPassword.matches("\\d{6}")) {
+            throw new IllegalArgumentException(
+                    "Account password must be exactly 6 digits."
+            );
+        }
+
+        this.accountPasswordSalt = Authentication.generateSalt();
+
+        this.accountPasswordHash = Authentication.hashPassword(
+                        accountPassword,
+                        accountPasswordSalt
+                );
+    }
+
+    public AccountRequest(
+            int requestId,
+            MasterCardType requestedMC,
+            AccountType accountType,
+            Customer customer,
+            String passwordHash,
+            String passwordSalt,
+            MasterCardType approvedMC,
+            RequestStatus status) {
+
+        this.requestId = requestId;
+        this.requestedMC = requestedMC;
+        this.accountType = accountType;
+        this.customer = customer;
+        this.accountPasswordHash = passwordHash;
+        this.accountPasswordSalt = passwordSalt;
+        this.approvedMC = approvedMC;
+        this.status = status;
     }
 
     public int getRequestId() {
@@ -45,6 +86,14 @@ public class AccountRequest {
 
     public RequestStatus getStatus() {
         return status;
+    }
+
+    public String getAccountPasswordHash() {
+        return accountPasswordHash;
+    }
+
+    public String getAccountPasswordSalt() {
+        return accountPasswordSalt;
     }
 
 

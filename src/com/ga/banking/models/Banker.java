@@ -1,8 +1,17 @@
 package com.ga.banking.models;
 
-public class Banker extends User{
+import com.ga.banking.Service.Authentication;
 
-    public Banker(int id, String name, String username, String password) {
-        super(id, name, username, password);
-    }
+public class Banker extends User {
+    public Banker(int id, String username, String email, String password) {
+
+        super(id, username, email, "", "");
+
+        String salt = Authentication.generateSalt();
+        String hash = Authentication.hashPassword(password, salt);
+        setPassSalt(salt);
+        setPassHash(hash);
+        
+
 }
+};

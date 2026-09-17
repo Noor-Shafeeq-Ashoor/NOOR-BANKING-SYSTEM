@@ -19,7 +19,7 @@ public class BankerService {
 
             System.out.println("ACCOUNT REQUEST ");
             System.out.println("Request ID: " + request.getRequestId());
-            System.out.println("Customer: " + request.getCustomer().getName());
+            System.out.println("Customer: " + request.getCustomer().getUsername());
             System.out.println("Account Type: " + request.getAccountType());
             System.out.println("Requested Mastercard: " + request.getRequestedMC());
             System.out.println("Status: " + request.getStatus());
